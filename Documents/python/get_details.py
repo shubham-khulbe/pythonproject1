@@ -21,7 +21,8 @@ def menu():
     		2. Show Interfaces
     		3. Show Mac-address table
     		4. Show ARP table
-		5. Exit
+		5. Show Neighbors
+		6. Exit
     		""")
 		ans=input("What would you like to do? ")
 		if ans=="1":
@@ -32,7 +33,9 @@ def menu():
 			mac_address_table()
 		elif ans=="4":
 			arp_table()
-		elif ans=="5":
+		elif ans =="5"
+			display_neighbors()
+		elif ans=="6":
 			print("\n Good Bye")
 			exit()	
 		else:
@@ -62,6 +65,10 @@ def arp_table():
 	print ('#'*15,' ARP TABLE ','#'*15,'\n')
 	print(json.dumps(ios_output, indent = 5))
 
-
-
+def display_neighbors():
+	ios_output = r3.get_lldp_neighbors()
+	print ('\n'*50)
+	print ('#'*15,' NEIGHBORS ','#'*15,'\n')
+	print(json.dumps(ios_output, indent =5))
+	
 menu()
