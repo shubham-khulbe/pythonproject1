@@ -1,7 +1,9 @@
 from datetime import datetime
 from sys import exit
 from netmiko import ConnectHandler
-from devices import cisco_ios1, cisco_ios2, cisco_ios3
+from devices import *
+
+device_list = [cisco_ios1, cisco_ios2, cisco_ios3]
 
 def check_bgp(net_connect, cmd='show run | inc router bgp'):
 	output = net_connect.send_command_expect(cmd)
@@ -15,19 +17,22 @@ def bgp_remove():
 """
 
 def remove_bgp_config(net_connect, cmd='no router bgp', as_number=''):
-	bgp_cmd = "{} {}".format(cmd, str(as_number))
-	cmd_list = [bgp_cmd]
-	output = net_connect.send_config_set(cmd_list)
-	print (output)
+	for device in device_list:
+		print (device)
+		as_number = device.pop('as_number')
+		bgp_cmd = "{} {}".format(cmd, str(as_number))
+		cmd_list = [bgp_cmd]
+		output = net_connect.send_config_set(cmd_list)
+		print (output)
 
 
 
 def main():
-	device_list = [cisco_ios1, cisco_ios2, cisco_ios3]
+	#device_list = [cisco_ios1, cisco_ios2, cisco_ios3]
 	start_time = datetime.now()
 	#print
 	for device in device_list:
-		print(device)
+		#print(device)
 		as_number = device.pop('as_number')
 		net_connect = ConnectHandler(**device)
 		net_connect.enable()
