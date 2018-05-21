@@ -7,6 +7,7 @@ cisco_ios1 = {
 		'password' : 'shubham',
 		'secret' : 'shubham',
 		'port' : 22,
+		'as_number' : 73,
 	}
 
 cisco_ios2 = {
@@ -16,6 +17,7 @@ cisco_ios2 = {
                 'password' : 'shubham',
                 'secret' : 'shubham',
 		'port' : 22,
+		'as_number' : 74,
         }
 
 cisco_ios3 = {
@@ -25,6 +27,7 @@ cisco_ios3 = {
                 'password' : 'shubham',
                 'secret' : 'shubham',
 		'port' : 22,
+		'as_number' : 75,
         }
 """
 cisco_ios4 = {
@@ -34,5 +37,6 @@ cisco_ios4 = {
                 'password' : 'shubham',
                 'secret' : 'shubham',
 		'port' : 22,
+		'as_number' : 76,
         }
 """
