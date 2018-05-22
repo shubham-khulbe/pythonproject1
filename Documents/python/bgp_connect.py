@@ -5,6 +5,7 @@ from netmiko import ConnectHandler
 from devices import *
 
 device_list = [cisco_ios1, cisco_ios2, cisco_ios3]
+file_name =''
 
 def check_bgp(net_connect, cmd='show run | inc router bgp'):
 	output = net_connect.send_command_expect(cmd)
@@ -30,6 +31,17 @@ def remove_bgp_config(net_connect, cmd='no router bgp', as_number=''):
 		print (output)
 
 
+def configure_bgp(net_connect, file_name=''):
+	"""Configure BGP on device."""
+	for device in device_list:
+		device_type = net_connect.device_type
+		file_name = 'bgp_' + device_type.split("_ssh")[0] + '.txt'
+		print(file_name)
+		try:
+			output = net_connect.send_config_from_file(config_file=file_name)
+			return output
+		except IOError:
+			print ("Error reading file: {}".format(file_name))
 
 def main():
 	#device_list_for_main = [cisco_ios1, cisco_ios2, cisco_ios3]
@@ -53,12 +65,17 @@ def main():
 	while ans:
 		print("""
 			1. REMOVE BGP FROM ALL DEVICES
-			2. EXIT
+			2. CONFIGURE BGP ON ALL DEVICES
+			3. EXIT
 			""")
 		ans = input("What would you like to do? ")
 		if ans =="1":
 			remove_bgp_config(net_connect,as_number = as_number)
 		elif ans =="2":
+			# Configure BGP
+        		output = configure_bgp(net_connect, file_name)
+        		print (output)
+		elif ans =="3":
 			print(" Good Bye ")
 			exit()
 		else:
