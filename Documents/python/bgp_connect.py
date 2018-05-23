@@ -33,9 +33,11 @@ def remove_bgp_config(net_connect, cmd='no router bgp', as_number=''):
 
 def configure_bgp(net_connect, file_name=''):
 	"""Configure BGP on device."""
+	file_num = 0
 	for device in device_list:
+		file_num +=1
 		device_type = net_connect.device_type
-		file_name = 'bgp_' + device_type.split("_ssh")[0] + '.txt'
+		file_name = 'bgp_' + device_type.split("_ssh")[0]+ str(file_num) + '.txt'
 		print(file_name)
 		try:
 			output = net_connect.send_config_from_file(config_file=file_name)
