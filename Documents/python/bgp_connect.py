@@ -40,7 +40,7 @@ def configure_bgp(net_connect, file_name=''):
 		print(device_type)
 		file_name = 'bgp_' + device_type.split("_ssh")[0]+ str(file_num) + '.txt'
 		print(file_name)
-		device.pop('as_number')
+		as_number = device.pop('as_number')
 		net_connect = ConnectHandler(**device)
 		net_connect.enable()
 		try:
