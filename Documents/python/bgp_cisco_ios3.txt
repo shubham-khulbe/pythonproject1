@@ -1,4 +1,4 @@
-router bgp 44
+router bgp 43
  bgp router-id 192.168.122.15
  bgp log-neighbor-changes
  neighbor 192.168.122.98 remote-as 43
