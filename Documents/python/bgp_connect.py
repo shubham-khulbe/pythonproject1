@@ -4,7 +4,7 @@ from sys import exit
 from netmiko import ConnectHandler
 from devices import *
 
-device_list = [cisco_ios1, cisco_ios2, cisco_ios3] # Devices added to the list
+device_list = [cisco_ios1, cisco_ios2] # Devices added to the list
 file_name =''
 
 def check_bgp(net_connect, cmd='show run | inc router bgp'):
