@@ -29,7 +29,7 @@ def remove_bgp_config(net_connect, cmd='no router bgp', as_number=''):
 		cmd_list = [bgp_cmd]
 		output = net_connect.send_config_set(cmd_list)
 		print (output)
-
+		device['as_number'] = as_number
 
 def configure_bgp(net_connect, file_name=''):
 	"""Configure BGP on device."""
@@ -49,6 +49,7 @@ def configure_bgp(net_connect, file_name=''):
 		except IOError:
 			print ("Error reading file: {}".format(file_name))
 
+		device['as_number'] = as_number
 def main():
 	#device_list_for_main = [cisco_ios1, cisco_ios2, cisco_ios3]
 	start_time = datetime.now()
