@@ -37,11 +37,15 @@ def configure_bgp(net_connect, file_name=''):
 	for device in device_list:
 		file_num +=1
 		device_type = net_connect.device_type
+		print(device_type)
 		file_name = 'bgp_' + device_type.split("_ssh")[0]+ str(file_num) + '.txt'
 		print(file_name)
+		device.pop('as_number')
+		net_connect = ConnectHandler(**device)
+		net_connect.enable()
 		try:
 			output = net_connect.send_config_from_file(config_file=file_name)
-			return output
+			print (output)
 		except IOError:
 			print ("Error reading file: {}".format(file_name))
 
