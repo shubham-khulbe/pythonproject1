@@ -1,7 +1,9 @@
 import json
 from napalm import get_network_driver
 from sys import exit
+from devices_get_details import *
 
+"""
 host_ip = input("Please enter your host device's IP : ")
 user_name = input ("Please enter your host device's USERNAME : ")
 pass_word = input("Please enter your PASSWORD : ")
@@ -13,7 +15,18 @@ r3 = driver(hostname=host_ip,username=user_name,password=pass_word,optional_args
 
 r3.open()
 
-def menu():
+"""
+def ind_details():
+	host_ip = input("Please enter your host device's IP : ")
+	user_name = input ("Please enter your host device's USERNAME : ")
+	pass_word = input("Please enter your PASSWORD : ")
+	secret_pass = input("Please enter your enable PASSWORD : ")
+
+	driver = get_network_driver('ios')
+	optional_argument = {'secret' : secret_pass}
+	router = driver(hostname=host_ip,username=user_name,password=pass_word,optional_args = optional_argument)
+
+	router.open()
 	ans=True
 	while ans:
 		print ("""
@@ -26,49 +39,132 @@ def menu():
     		""")
 		ans=input("What would you like to do? ")
 		if ans=="1":
-			general_facts()
+			info.general_facts(router,host_ip)
 		elif ans=="2":
-			interface_info()
+			info.interface_info(router,host_ip)
 		elif ans=="3":
-			mac_address_table()
+			info.mac_address_table(router,host_ip)
 		elif ans=="4":
-			arp_table()
-		elif ans =="5"
-			display_neighbors()
+			info.arp_table(router,host_ip)
+		elif ans =="5":
+			info.display_neighbors(router,host_ip)
 		elif ans=="6":
-			print("\n Good Bye")
-			exit()	
+			main_menu()
 		else:
 			print("Please enter a valid option")
+			ans = True
 
-def general_facts():
-	ios_output = r3.get_facts()
-	print ('\n'*50)
-	print ('#'*15,' GENERAL INFORMATION ','#'*15,'\n')
-	print(json.dumps(ios_output, indent =5 ))
+def main_menu():
+	choice = True
+	while choice:
+		print("""
+			1. GET INFORMTION FOR ALL DEVICES
+			2. GET INFORMATION FOR A PARTICULAR DEVICE
+			3. EXIT
+		""")
+		choice = input("Please choose one option")
+		if choice == "1":
+			combined_information()
+		elif choice == "2":
+			ind_details()
+		elif choice == "3":
+			print("Good Bye")
+			exit()
+		else:
+			print("Enter a valid option")
+			choice = True
 
-def interface_info():
-	ios_output = r3.get_interfaces()
-	print ('\n'*50)
-	print ('#'*15,' INTERFACES ','#'*15,'\n')
-	print(json.dumps(ios_output, indent = 5))
+class Get_facts():
+	def __init__(self):
+		pass
 
-def mac_address_table():
-	ios_output = r3.get_mac_address_table()
-	print ('\n'*50)
-	print ('#'*15,' MAC ADDRESS TABLE ','#'*15,'\n')
-	print(json.dumps(ios_output, indent = 5))
+	def general_facts(self,router,host_ip):
+		ios_output = router.get_facts()
+		print ('\n'*50)
+		print ('#'*15,' GENERAL INFORMATION FOR {}'.format(host_ip),'#'*15,'\n')
+		print(json.dumps(ios_output, indent =5 ))
 
-def arp_table():
-	ios_output = r3.get_arp_table()
-	print ('\n'*50)
-	print ('#'*15,' ARP TABLE ','#'*15,'\n')
-	print(json.dumps(ios_output, indent = 5))
+	def interface_info(self,router,host_ip):
+		ios_output = router.get_interfaces()
+		print ('\n'*50)
+		print ('#'*15,' INTERFACES FOR {}'.format(host_ip),'#'*15,'\n')
+		print(json.dumps(ios_output, indent = 5))
 
-def display_neighbors():
-	ios_output = r3.get_lldp_neighbors()
-	print ('\n'*50)
-	print ('#'*15,' NEIGHBORS ','#'*15,'\n')
-	print(json.dumps(ios_output, indent =5))
-	
-menu()
+	def mac_address_table(self,router,host_ip):
+		ios_output = router.get_mac_address_table()
+		print ('\n'*50)
+		print ('#'*15,' MAC ADDRESS TABLE FOR {}'.format(host_ip),'#'*15,'\n')
+		print(json.dumps(ios_output, indent = 5))
+
+	def arp_table(self,router,host_ip):
+		ios_output = router.get_arp_table()
+		print ('\n'*50)
+		print ('#'*15,' ARP TABLE FOR {}'.format(host_ip),'#'*15,'\n')
+		print(json.dumps(ios_output, indent = 5))
+
+	def display_neighbors(self,router,host_ip):
+		ios_output = router.get_lldp_neighbors()
+		print ('\n'*50)
+		print ('#'*15,' NEIGHBORS FOR {}'.format(host_ip),'#'*15,'\n')
+		print(json.dumps(ios_output, indent =5))
+
+info = Get_facts()
+
+
+def combined_information():
+	device_list = [cisco_ios1,cisco_ios2,cisco_ios3,cisco_ios4]
+	driver = get_network_driver('ios')
+	ans = True
+	while ans:
+		print ("""
+                1. Show general information 
+                2. Show Interfaces
+                3. Show Mac-address table
+                4. Show ARP table
+                5. Show Neighbors
+                6. Exit
+                """)
+		ans=input("What would you like to do? ")
+		if ans=="1":
+			for device in device_list:
+				optional_argument = {"secret" : device['secret']}
+				r = driver(device['ip'],device['username'],device['password'],optional_args = optional_argument)
+				r.open()
+				info.general_facts(r,device['ip'])
+		elif ans=="2":
+			for device in device_list:
+                                optional_argument = {"secret" : device['secret']}
+                                r = driver(device['ip'],device['username'],device['password'],device['secret'],optional_args=optional_argument)
+                                r.open()
+                                info.interface_info(r,device['ip'])
+		elif ans=="3":
+			for device in device_list:
+                                optional_argument = {"secret" : device['secret']}
+                                r = driver(device['ip'],device['username'],device['password'],device['secret'],optional_args=optional_argument)
+                                r.open()
+                                info.mac_address_table(r,device['ip'])
+		elif ans=="4":
+			for device in device_list:
+                                optional_argument = {"secret" : device['secret']}
+                                r = driver(device['ip'],device['username'],device['password'],device['secret'],optional_args=optional_argument)
+                                r.open()
+                                info.arp_table(r,device['ip'])
+		elif ans =="5":
+			for device in device_list:
+                                optional_argument = {"secret" : device['secret']}
+                                r = driver(device['ip'],device['username'],device['password'],device['secret'],optional_args=optional_argument)
+                                r.open()
+                                info.display_neighbors(r,device['ip'])
+		elif ans =="6":
+			main_menu()
+		else :
+			print("Please enter a valid option")
+			ans = True
+		
+
+	#device_list = [cisco_ios1,cisco_ios2,cisco_ios3,cisco_ios4]
+	#for device in device_list:
+	#	r = driver(device)
+	#	r.open()
+
+main_menu()
